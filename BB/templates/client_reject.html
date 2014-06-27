@@ -1,0 +1,30 @@
+{% extends 'base-css.html' %}
+{% block title %}Vote Rejected{% endblock %}
+{% load staticfiles %}
+
+{% block extrascript %}
+<style type="text/css">
+    .highlight {
+        padding: 9px 9px;
+        margin-top: 14px;
+        margin-bottom: 14px;
+        background-color: #f7f7f9;
+        border: 1px solid #e1e1e8;
+        border-radius: 4px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div align="left" class="highlight">
+	<h2>Warning: your vote is rejected due to one of the following reasons:</h2>
+	<p>  1. The submitted vote code is invalid.</p>
+	<p>  2. The ballot is already casted.</p>
+	<p>  3. The dual ballot is already casted.</p>
+        <p>  4. This election has not started yet.</p>
+        <p>  5. This election is already ended.</p>
+        <p>  6. This election is currently locked.</p>
+    </div>
+</div>
+{% endblock %}

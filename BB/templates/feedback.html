@@ -1,0 +1,52 @@
+  <div class="modal fade" id="feedbackModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title"><span class="glyphicon glyphicon-ok-sign"></span> Your vote is accepted!</h4>
+        </div>
+        <div class="modal-body">
+		<p>Please verify wether the following receipt matchs the one in your ballot.</p>
+		<div align="center">
+		<label><font size="4">Receipt: </font></label>	
+   		<button type="button" class="btn btn-lg disabled" >{{rec}}</button>
+		</div>
+		<p>(Optional Step:) Could you please identify that the following code is included in your dual ballot and select its corresponding option for us?</p>	
+		<form class="form-horizontal" role="form"action="" method="post" {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>{% csrf_token %}
+		<div class="form-group">
+		<label for="inputcode" class="col-sm-2 control-label">Code: </label>
+		<div class="col-sm-10">
+		<select class="form-control" id="inputcode" name = "checkcode">
+    		<option selected="selected">------- Select a votecode -------</option>
+    		{% for c in codes %}
+    		<option>{{c}}</option>
+    		{% endfor %}
+		</select>
+		</div>
+		</div>
+		<div class="form-group">
+		<label for="inputoption" class="col-sm-2 control-label">Option: </label>
+		<div class="col-sm-10">
+		<select class="form-control" id="inputoption" name = "checkoption">
+ 			<option selected="selected">------- Select an option -------</option>
+			{% for opt in options %}  			
+			<option>{{opt.1}}</option>
+  			{% endfor %}
+		</select>
+		</div>
+		</div>
+		<div class="form-group" align="right">
+		<button type="submit" class="btn btn-primary" >Submit</button>
+		</div>
+		</form>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
+
+
+
+
+

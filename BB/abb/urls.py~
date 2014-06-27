@@ -1,0 +1,9 @@
+from django.conf.urls import patterns, url
+
+from abb import views
+
+urlpatterns = patterns('',
+    url(r'^(?P<eid>\w+)/$', views.index),
+	url(r'^(?P<eid>\w+)/export/(?P<table>\d+)/(?P<ver>\d+)/$', 'views.export'),
+	url(r'^$', views.empty)
+)

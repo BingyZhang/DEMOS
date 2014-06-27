@@ -1,0 +1,59 @@
+{% for itemset in BigData.Data %}
+<table class="table table-hover">
+<thead>
+              <tr>
+                 {% for col in col_names %}
+              <th>{{col}}</th>
+              {% endfor %}
+              </tr>
+</thead>
+<tbody>
+{% for item in itemset %}
+		<tr>
+	      {% for entry in item %}
+	         <td><div style="word-wrap: break-word">
+            {% if forloop.first %}
+                {% if entry.serial %}
+            <button style="width: 65px" type="button" class="btn btn-pink" data-toggle="popover"
+      data-content="{{entry.bit}}">{{entry.serial}}</button>
+                {% endif %}
+            {% endif %}
+            {% if forloop.counter = 2 %}
+			{% if entry.code %}
+            <button style="width: 150px" type="button" class="btn btn-info" data-toggle="popover"
+                 data-content="{{entry.enc}}">{{entry.code}}</button>
+			{% else %}
+			<button style="width: 100px" type="button" class="btn btn-warning" data-toggle="popover"
+                 data-content="{{entry.enc}}">Committed</button>
+			{% endif%}
+            {% endif %}
+            {% if forloop.counter = 3 %}
+            <button style="width: 95px" type="button" class="btn btn-danger" data-toggle="popover"
+                 data-content="{{entry.cipher}}">Encrypted</button>
+            {% endif %}
+            {% if forloop.counter = 4 %}
+            <button style="width: 95px" type="button" class="btn btn-warning" data-toggle="popover"
+                 data-content="{{entry.aux}}">Committed</button>
+            {% endif %}
+            {% if forloop.counter = 5 and entry.mark %}
+            <button style="width: 110px" type="button" class="btn btn-sample">{% ifequal entry.mark "Voted" %}<span class="glyphicon glyphicon-ok"></span>    {% endifequal %} {{entry.mark}}</button>
+            {% endif %}
+            {% if forloop.counter = 6 and entry.rand  %}
+            <button style="width: 60px" type="button" class="btn" data-toggle="popover"
+                 data-content="{{entry.rand}}">Coins</button>
+            {% endif %}
+	    {% if forloop.counter = 7 and entry.post  %}
+            <button style="width: 75px" type="button" class="btn btn-success" data-toggle="popover"
+                 data-content="{{entry.post}}">Verified</button>
+            {% endif %}
+		 </div></td>
+	      {% endfor %}
+	      </tr>
+{% endfor %}
+</tbody>
+</table>
+{% endfor %}   <!-- Bigdata --> 
+{% if next_page %}
+<div class="next"><a href="https://crypto.di.uoa.gr/demos/abb/{{eid}}/{{tab}}/{{next_page}}/">next</a></div>
+{% endif %}
+

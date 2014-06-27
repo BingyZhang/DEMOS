@@ -1,0 +1,196 @@
+{% extends 'base-css.html' %}
+{% block title %}Διεπαφή Ψηφοφόρου{% endblock %}
+{% load staticfiles %}
+{% if running == 1 %}
+{% block extrascript %}	
+<!-- Countdown Clock -->
+	<script src="{% static "js/countdown.js" %}" type="text/javascript"></script>
+{% endblock %}
+{% endif %}
+{% block content %}
+
+      <div class="container">
+        <h2><font color="purple">{{election.question}}</font></h2>
+		<p><div class="btn-group">
+  			<button type="button" class="btn btn-default" disabled="disabled">Χρόνος έναρξης: {{election.start}}</button>
+  			<button type="button" class="btn btn-default" disabled="disabled">Χρόνος λήξης: {{election.end}}</button>
+		</div>
+        </p>
+		<div class="col-md-6">
+		{% if running == 0 %}
+			<button type="button" class="btn btn-warning btn-lg" disabled="disabled"><span class="glyphicon glyphicon-list-alt"></span> χρόνος έναρξης της ψηφοφορίας είναι {{election.start}}</button>
+		{% endif %}
+		{% if running == 1 %}
+			<script type="application/javascript">
+				function closeElection(){
+					location.reload();
+				};
+				var CountdownImageFolder = "{% static "images/" %}";
+				var electionCountdown = new Countdown({
+								 	time: {{time}},
+									width:{%if time > 86400 %}300{%else%}220{% endif %}, 
+									height:60,  
+									rangeHi:"{%if time > 86400 %}day{%else%}hour{% endif %}",
+									onComplete: closeElection,
+									style:"flip"	// <- no comma on last item!
+									});
+
+			</script>
+		{% endif %}
+		{% if running == 2 %}
+			<button type="button" class="btn btn-danger btn-lg" disabled="disabled"><span class="glyphicon glyphicon-stats"></span> εκλογική διαδικασία έχει ολοκληρωθεί.</button>
+		{% endif %}
+		{% if running == 10 %}
+			<button type="button" class="btn btn-warning btn-lg" disabled="disabled"><span class="glyphicon glyphicon-lock"></span> ψηφοφορία έχει παύσει προσωρινά.</button>
+		{% endif %}
+		</div>
+	  </div><!-- /container -->
+
+<!-- =========================================================== -->
+
+
+<!-- Modal invalid-->
+  <div class="modal fade" id="invalidModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title"><span class="glyphicon glyphicon-warning-sign"></span> ψήφος σας δεν έγινε δεκτή!</h4>
+        </div>
+        <div class="modal-body">
+		<p>Προειδοποίηση: η ψήφος σας δεν έγινε δεκτή για έναν από τους παρακάτω λόγους:</p>
+		<p>  1. κωδικός που υποβάλατε δεν είναι έγκυρος.</p>
+		<p>  2. ψηφοδέλτιο έχει ήδη χρησιμοποιηθεί.</p>
+		<p>  3. έτερο ψηφοδέλτιο έχει ήδη χρησιμοποιηθεί.</p>
+        <p>  4. ψηφοφορία δεν έχει ξεκινήσει.</p>
+        <p>  5. ψηφοφορία έχει λήξει.</p>
+        <p>  6. ψηφοφορία έχει παύσει προσωρινά.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Εντάξει</button> 
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+<!-- Modal feedback-->
+  <div class="modal fade" id="feedbackModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title"><span class="glyphicon glyphicon-warning-sign"></span> ψήφος σας έγινε δεκτή!</h4>
+        </div>
+        <div class="modal-body">
+		<p>Συγχαρητήρια! Η ψήφος σας έγινε δεκτή. Σας ευχαριστούμε για τη συμμετοχή σας στην εκλογική διαδικασία.</p>
+		<div align="center">
+		<label><font size="4">Απόδειξη: </font></label>	
+   		<button type="button" class="btn btn-lg disabled" id="receipt"></button>
+		</div>
+		<p></p>
+		<p>ΥΓ: παρακαλούμε μην υποβάλετε την ψήφο σας ξανά, διότι θα απορριφθεί λόγω διπλοψηφίας.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal" id="closeall">Εντάξει</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+<div class="container">
+<h2>Καλώς ήλθατε,</h2>
+<p>Παρακαλούμε επιλέξτε ένα από τα δύο ακόλουθα ψηφοδέλτια και ψηφίστε. {% if email%} Τα ψηφοδέλτια με τους προσωπικούς σας κωδικούς υποψηφίων έχουν αποσταλεί στην εξής email διεύθυνση "{{email}}". {% endif %}Εναλλακτικά, μπορείτε να ψηφίσετε στη διεύθυνση Web <a href="http://tal.di.uoa.gr/finer/vbb/{{election.EID}}/">VBB</a> εισάγοντας τον σειριακό αριθμό του ψηφοδελτίου σας και τον(τους) κωδικό(ούς) υποψηφίου(ων) της επιλογής σας.</p>
+
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                    Ψηφοδέλτιο #{{serial}}
+                </a>
+            </h4>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse in">
+            <div class="panel-body">
+                <form role="form" action="" method="post" id="formvote1">
+			<div class="btn-group" data-toggle="buttons">
+			{% for opt in c1 %}
+			<label class="btn btn-lg btn-info">
+                        <input type="radio" {% if forloop.first %}checked="checked"{% endif %} id="opt1{{forloop.counter}}" name="options" value="{{forloop.counter}}"/> {{opt.1}}
+			</label>
+                        {% endfor %}
+			</div>
+                <div align="right">
+                <button type="submit" id="submitvote1" class="btn btn-success">Υποβολή</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div> <!-- /container -->
+
+{% endblock %}
+
+{% block afterbody %}
+<!-- Submit form -->
+<script type="text/javascript">
+	$(document).ready(function(){
+		var start = new Date().getTime();
+		var opts1 = new Array();
+		{% for opt in c1 %}
+                opts1[{{forloop.counter}}]="{{opt.0}}"; 
+                {% endfor %}
+		var opts2 = new Array();
+                {% for opt in c2 %}
+                opts2[{{forloop.counter}}]="{{opt.0}}";
+                {% endfor %}
+
+		$("closeall").click(function () {
+	window.close();
+		 });
+		$("#formvote1").submit(function(){
+			var time = new Date().getTime() - start;
+			var code = '';
+			var feedbacks = new Array();
+			var which = $('input[name=options]:checked').val();
+			if (time%2 == 0){
+				{% for opt in c2 %}
+                        	feedbacks[{{forloop.counter}}]="{{opt.0}},{{opt.1}}";         
+                        	{% endfor %}
+				code = opts1[which];
+			}
+			else {
+                                {% for opt in c1 %}
+                                feedbacks[{{forloop.counter}}]="{{opt.0}},{{opt.1}}"; 
+                                {% endfor %}
+				code = opts2[which];
+			};
+			$.post("{{bb_url}}/vbb/{{election.EID}}/client/",
+			{serial:{{serial}},
+			code:code,
+			{% for opt in c1 %}
+                	feedback{{forloop.counter}}:feedbacks[{{forloop.counter}}],
+                	{% endfor %}
+			},
+			function(data,status){
+				if(data == "invalid code"){
+					$('#invalidModal').modal('show');
+				}
+				else {
+					$('#receipt').replaceWith('<button type="button" class="btn btn-lg disabled" id="receipt">'+data+'</button>');
+					$('#feedbackModal').modal('show');
+				}
+			})
+			.fail(function(xhr) {
+				console.log("Error: " + xhr.statusText);
+				alert("Error: " + xhr.statusText);
+			});
+			
+			return false;
+		});
+	});
+</script>
+{% endblock %}
+
+

@@ -1,0 +1,193 @@
+{% extends 'base-css.html' %}
+{% block title %}Authenticated Voter Interface{% endblock %}
+{% load staticfiles %}
+{% if running == 1 %}
+{% block extrascript %}	
+<!-- Countdown Clock -->
+	<script src="{% static "js/countdown.js" %}" type="text/javascript"></script>
+{% endblock %}
+{% endif %}
+{% block content %}
+
+      <div class="container">
+        <h2><font color="purple">{{election.question}}</font></h2>
+		<p><div class="btn-group">
+  			<button type="button" class="btn btn-default" disabled="disabled">Start time: {{election.start}}</button>
+  			<button type="button" class="btn btn-default" disabled="disabled">End time: {{election.end}}</button>
+		</div>
+        </p>
+		<div class="col-md-6">
+		{% if running == 0 %}
+			<button type="button" class="btn btn-warning btn-lg" disabled="disabled"><span class="glyphicon glyphicon-list-alt"></span> The election will start at {{election.start}}</button>
+		{% endif %}
+		{% if running == 1 %}
+			<script type="application/javascript">
+				function closeElection(){
+					location.reload();
+				};
+				var CountdownImageFolder = "{% static "images/" %}";
+				var electionCountdown = new Countdown({
+								 	time: {{time}},
+									width:{%if time > 86400 %}300{%else%}220{% endif %}, 
+									height:60,  
+									rangeHi:"{%if time > 86400 %}day{%else%}hour{% endif %}",
+									onComplete: closeElection,
+									style:"flip"	// <- no comma on last item!
+									});
+
+			</script>
+		{% endif %}
+		{% if running == 2 %}
+			<button type="button" class="btn btn-danger btn-lg" disabled="disabled"><span class="glyphicon glyphicon-stats"></span> The election ended, and the tally result will be published on VBB.</button>
+		{% endif %}
+		{% if running == 10 %}
+			<button type="button" class="btn btn-warning btn-lg" disabled="disabled"><span class="glyphicon glyphicon-lock"></span> The election is currently locked.</button>
+		{% endif %}
+		</div>
+	  </div><!-- /container -->
+
+<!-- =========================================================== -->
+
+
+<!-- Modal invalid-->
+  <div class="modal fade" id="invalidModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title"><span class="glyphicon glyphicon-warning-sign"></span> Your vote is NOT accepted!</h4>
+        </div>
+        <div class="modal-body">
+		<p>Warning: your vote is rejected due to one of the following reasons:</p>
+		<p>  1. The submitted vote code is invalid.</p>
+		<p>  2. The ballot is already casted.</p>
+		<p>  3. The dual ballot is already casted.</p>
+        <p>  4. This election has not started yet.</p>
+        <p>  5. This election is already ended.</p>
+        <p>  6. This election is currently locked.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">OK</button> 
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+<!-- Modal feedback-->
+  <div class="modal fade" id="feedbackModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title"><span class="glyphicon glyphicon-warning-sign"></span> Your vote is accepted!</h4>
+        </div>
+        <div class="modal-body">
+		<p>Congratulations! Your vote is accepted. Thank you for participanting this election.</p>
+		<div align="center">
+		<label><font size="4">Receipt: </font></label>	
+   		<button type="button" class="btn btn-lg disabled" id="receipt"></button>
+		</div>
+		<p></p>
+		<p>PS: please do not submit your vote again, as it will be rejected for double submission.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+<div class="container">
+<h2>Hello{% if name %} {{name}}{% endif %},</h2>
+<p>Please select one of the following two ballots and cast your vote. {% if email%} An email that contains your votecode-based ballots has been sent to "{{email}}". {% endif %}Alternatively, you can cast your vote at <a href="https://crypto.di.uoa.gr/demos/vbb/{{election.EID}}/">VBB</a> by entrying the serial number and votecode(s).</p>
+
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                    Ballot #{{serial}}
+                </a>
+            </h4>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse in">
+            <div class="panel-body">
+                <form role="form" action="" method="post" id="formvote1">
+			<div class="btn-group" data-toggle="buttons">
+			{% for opt in c1 %}
+			<label class="btn btn-lg btn-info">
+                        <input type="radio" {% if forloop.first %}checked="checked"{% endif %} id="opt1{{forloop.counter}}" name="options" value="{{forloop.counter}}"/> {{opt.1}}
+			</label>
+                        {% endfor %}
+			</div>
+                <div align="right">
+                <button type="submit" id="submitvote1" class="btn btn-success">Submit</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div> <!-- /container -->
+
+{% endblock %}
+
+{% block afterbody %}
+<!-- Submit form -->
+<script type="text/javascript">
+	$(document).ready(function(){
+		var start = new Date().getTime();
+		var opts1 = new Array();
+		{% for opt in c1 %}
+                opts1[{{forloop.counter}}]="{{opt.0}}"; 
+                {% endfor %}
+		var opts2 = new Array();
+                {% for opt in c2 %}
+                opts2[{{forloop.counter}}]="{{opt.0}}";
+                {% endfor %}
+
+		$("#formvote1").submit(function(){
+			var time = new Date().getTime() - start;
+			var code = '';
+			var feedbacks = new Array();
+			var which = $('input[name=options]:checked').val();
+			if (time%2 == 0){
+				{% for opt in c2 %}
+                        	feedbacks[{{forloop.counter}}]="{{opt.0}},{{opt.1}}";         
+                        	{% endfor %}
+				code = opts1[which];
+			}
+			else {
+                                {% for opt in c1 %}
+                                feedbacks[{{forloop.counter}}]="{{opt.0}},{{opt.1}}"; 
+                                {% endfor %}
+				code = opts2[which];
+			};
+			$.post("{{bb_url}}/vbb/{{election.EID}}/client/",
+			{serial:{{serial}},
+			code:code,
+			{% for opt in c1 %}
+                	feedback{{forloop.counter}}:feedbacks[{{forloop.counter}}],
+                	{% endfor %}
+			},
+			function(data,status){
+				if(data == "invalid code"){
+					$('#invalidModal').modal('show');
+				}
+				else {
+					$('#receipt').replaceWith('<button type="button" class="btn btn-lg disabled" id="receipt">'+data+'</button>');
+					$('#feedbackModal').modal('show');
+				}
+			})
+			.fail(function(xhr) {
+				console.log("Error: " + xhr.statusText);
+				alert("Error: " + xhr.statusText);
+			});
+			
+			return false;
+		});
+	});
+</script>
+{% endblock %}
+
+

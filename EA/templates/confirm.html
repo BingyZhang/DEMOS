@@ -1,0 +1,36 @@
+{% extends 'base-css.html' %}
+{% block title %}Acknowledgement{% endblock %}
+{% load staticfiles %}
+
+{% block extrascript %}
+<style type="text/css">
+    .highlight {
+        padding: 9px 9px;
+        margin-top: 14px;
+        margin-bottom: 14px;
+        background-color: #f7f7f9;
+        border: 1px solid #e1e1e8;
+        border-radius: 4px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div align="left" class="highlight">
+<h1>Congratulations {{name}},</h1>
+    <h2>The election has been created!</h2>
+<h2>A confirmation email has been sent to "{{email}}".</h2>
+    {% for entry in data %}
+    <p>{{entry}} </p>
+    {% endfor %}
+    <p>VBB URL: <a href="{{VBB}}">{{VBB}}</a></p>
+    <p>ABB URL: <a href="{{ABB}}">{{ABB}}</a></p>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+

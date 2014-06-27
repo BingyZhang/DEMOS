@@ -1,0 +1,385 @@
+{% extends 'base-css.html' %}
+{% block title %}Διεπαφή Ψηφοφόρου{% endblock %}
+{% load staticfiles %}
+{% if running == 1 %}
+{% block extrascript %}	
+<!-- Countdown Clock -->
+	<script src="{% static "js/countdown.js" %}" type="text/javascript"></script>
+{% endblock %}
+{% endif %}
+{% block content %}
+
+      <div class="container">
+        <h2><font color="purple">{{election.question}}</font></h2>
+
+<!-- =========================================================== -->
+
+
+<!-- Modal invalid-->
+  <div class="modal fade" id="invalidModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title"><span class="glyphicon glyphicon-warning-sign"></span> ψήφος σας δεν έγινε δεκτή!</h4>
+        </div>
+        <div class="modal-body">
+		<p>Προειδοποίηση: η ψήφος σας δεν έγινε δεκτή για έναν από τους παρακάτω λόγους:</p>
+		<p>  1. κωδικός που υποβάλατε δεν είναι έγκυρος.</p>
+		<p>  2. ψηφοδέλτιο έχει ήδη χρησιμοποιηθεί.</p>
+		<p>  3. έτερο ψηφοδέλτιο έχει ήδη χρησιμοποιηθεί.</p>
+        <p>  4. ψηφοφορία δεν έχει ξεκινήσει.</p>
+        <p>  5. ψηφοφορία έχει λήξει.</p>
+        <p>  6. ψηφοφορία έχει παύσει προσωρινά.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Εντάξει</button> 
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+<!-- Modal feedback-->
+  <div class="modal fade" id="feedbackModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title"><span class="glyphicon glyphicon-warning-sign"></span> ψήφος σας έγινε δεκτή!</h4>
+        </div>
+        <div class="modal-body">
+		<p>Συγχαρητήρια! Η ψήφος σας έγινε δεκτή. Σας ευχαριστούμε για τη συμμετοχή σας στην εκλογική διαδικασία.</p>
+		<div align="center">
+		<label><font size="4">Απόδειξη: </font></label>	
+   		<button type="button" class="btn btn-lg disabled" id="receipt"></button>
+		</div>
+		<p></p>
+		<p>ΥΓ: παρακαλούμε μην υποβάλετε την ψήφο σας ξανά, διότι θα απορριφθεί λόγω διπλοψηφίας.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal" id="closeall">Εντάξει</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
+
+
+<!-- Modal p1 -->
+<div class="modal fade" id="party1" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+<h4 class="modal-title">Ε. Κεντρώων</h4>
+</div>
+<div class="modal-body">
+<h2>Ένωση Κεντρώων- Βασίλης Λεβέντης</h2>
+
+<div align="center">
+<img src="{% static "images/01.gif" %}" class="img-thumbnail">
+</div>
+
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-default" data-dismiss="modal">αλλαγή</button>
+<button type="button" class="btn btn-success">ψήφος</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Modal p2-->
+<div class="modal fade" id="party2" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+<h4 class="modal-title">ΑΝΤΑΡΣΥΑ</h4>
+</div>
+<div class="modal-body">
+<p>ΑΝΤΑΡΣΥΑ (Αντικαπιταλιστική Αριστερή Συνεργασία για την Ανατροπή) με συντονιστική επιτροπή</p>
+
+<div align="center">
+<img src="{% static "images/02.gif" %}" class="img-thumbnail">
+</div>
+
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-default" data-dismiss="modal">αλλαγή</button>
+<button type="button" class="btn btn-success">ψήφος</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Modal p4-->
+<div class="modal fade" id="party4" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+<h4 class="modal-title">ΑΣΚΕ</h4>
+</div>
+<div class="modal-body">
+<p>ΑΣΚΕ – Αγωνιστικό Σοσιαλιστικό Κόμμα Ελλάδας) με εκτελεστική επιτροπή</p>
+
+<div align="center">
+<img src="{% static "images/04.gif" %}" class="img-thumbnail">
+</div>
+
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-default" data-dismiss="modal">αλλαγή</button>
+<button type="button" class="btn btn-success">ψήφος</button>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Modal p9-->
+<div class="modal fade" id="party9" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+<h4 class="modal-title">ΛΑΟΣ</h4>
+</div>
+<div class="modal-body">
+<p>ΛΑΟΣ – Γιώργος Καρατζαφέρης</p>
+
+<div align="center">
+<img src="{% static "images/09.gif" %}" class="img-thumbnail">
+</div>
+
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-default" data-dismiss="modal">αλλαγή</button>
+<button type="button" class="btn btn-success">ψήφος</button>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Modal p10-->
+<div class="modal fade" id="party10" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+<h4 class="modal-title">Ελλην. Κυνηγοί</h4>
+</div>
+<div class="modal-body">
+<p>Κόμμα Ελλήνων Κυνηγών – Γιώργος Τσαγκανέλιας</p>
+
+<div align="center">
+<img src="{% static "images/10.gif" %}" class="img-thumbnail">
+</div>
+
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-default" data-dismiss="modal">αλλαγή</button>
+<button type="button" class="btn btn-success">ψήφος</button>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Modal p12-->
+<div class="modal fade" id="party12" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+<h4 class="modal-title">ΚΚΕ</h4>
+</div>
+<div class="modal-body">
+<p>ΚΚΕ – Δημήτρης Κουτσούμπας</p>
+
+<div align="center">
+<img src="{% static "images/12.gif" %}" class="img-thumbnail">
+</div>
+
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-default" data-dismiss="modal">αλλαγή</button>
+<button type="button" class="btn btn-success">ψήφος</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Modal p15-->
+<div class="modal fade" id="party15" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+<h4 class="modal-title">Χρυσή Αυγή</h4>
+</div>
+<div class="modal-body">
+<p>Λαϊκός Σύνδεσμός- Χρυσή Αυγή – Νίκος Μιχαλολιάκος</p>
+
+<div align="center">
+<img src="{% static "images/15.gif" %}" class="img-thumbnail">
+</div>
+
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-default" data-dismiss="modal">αλλαγή</button>
+<button type="button" class="btn btn-success">ψήφος</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Modal p17-->
+<div class="modal fade" id="party17" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+<h4 class="modal-title">ΕΕΚ Τρότσκ.</h4>
+</div>
+<div class="modal-body">
+<p>Εργατικό Επαναστατικό Κόμμα (ΕΕΚ Τροτσκιστές), Σαμπετάι Μάτσας</p>
+
+<div align="center">
+<img src="{% static "images/17.gif" %}" class="img-thumbnail">
+</div>
+
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-default" data-dismiss="modal">αλλαγή</button>
+<button type="button" class="btn btn-success">ψήφος</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Modal p18-->
+<div class="modal fade" id="party18" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+<h4 class="modal-title">Λευκό</h4>
+</div>
+<div class="modal-body">
+<p>Λευκό, Κων. Ντάλιος</p>
+
+<div align="center">
+<img src="{% static "images/18.gif" %}" class="img-thumbnail">
+</div>
+
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-default" data-dismiss="modal">αλλαγή</button>
+<button type="button" class="btn btn-success">ψήφος</button>
+</div>
+</div>
+</div>
+</div>
+
+
+
+<div class="container">
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                    Ψηφοδέλτιο #{{serial}}
+                </a>
+            </h4>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse in">
+            <div class="panel-body">
+<table class="table table-striped">
+<tbody>
+{% for row in options %}
+<tr>
+{% for opt in row %}
+<td> <button type="button" style="width: 170px" class="btn btn-lg btn-info" data-toggle="modal" data-target="#party{{opt.id}}">{{opt.name.0}}</button> </td>
+{% endfor %}
+</tr>
+{% endfor %}
+
+</tbody>
+</table>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+</div> <!-- /container -->
+
+{% endblock %}
+
+{% block afterbody %}
+<!-- Submit form -->
+<script type="text/javascript">
+	$(document).ready(function(){
+		var start = new Date().getTime();
+		var opts1 = new Array();
+		{% for opt in c1 %}
+                opts1[{{forloop.counter}}]="{{opt.0}}"; 
+                {% endfor %}
+		var opts2 = new Array();
+                {% for opt in c2 %}
+                opts2[{{forloop.counter}}]="{{opt.0}}";
+                {% endfor %}
+
+		$("closeall").click(function () {
+	window.close();
+		 });
+		$("#formvote1").submit(function(){
+			var time = new Date().getTime() - start;
+			var code = '';
+			var feedbacks = new Array();
+			var which = $('input[name=options]:checked').val();
+			if (time%2 == 0){
+				{% for opt in c2 %}
+                        	feedbacks[{{forloop.counter}}]="{{opt.0}},{{opt.1}}";         
+                        	{% endfor %}
+				code = opts1[which];
+			}
+			else {
+                                {% for opt in c1 %}
+                                feedbacks[{{forloop.counter}}]="{{opt.0}},{{opt.1}}"; 
+                                {% endfor %}
+				code = opts2[which];
+			};
+			$.post("{{bb_url}}/vbb/{{election.EID}}/client/",
+			{serial:{{serial}},
+			code:code,
+			{% for opt in c1 %}
+                	feedback{{forloop.counter}}:feedbacks[{{forloop.counter}}],
+                	{% endfor %}
+			},
+			function(data,status){
+				if(data == "invalid code"){
+					$('#invalidModal').modal('show');
+				}
+				else {
+					$('#receipt').replaceWith('<button type="button" class="btn btn-lg disabled" id="receipt">'+data+'</button>');
+					$('#feedbackModal').modal('show');
+				}
+			})
+			.fail(function(xhr) {
+				console.log("Error: " + xhr.statusText);
+				alert("Error: " + xhr.statusText);
+			});
+			
+			return false;
+		});
+	});
+</script>
+{% endblock %}
+
+

@@ -1,0 +1,21 @@
+{% extends 'base-css.html' %}
+{% block title %}Acknowledgement{% endblock %}
+{% load staticfiles %}
+{% block content %}
+<img src="{% static "images/thank-you.jpg" %}" data-toggle="tooltip" title="first tooltip" id = "thankspopover">
+{% endblock %}
+
+
+
+
+{% block afterbody %}
+	<!-- popover -->
+	<script>
+    	!function ($) {
+  		$(function(){
+    			$('#thankspopover').tooltip('show')
+		})
+
+	}(window.jQuery)
+	</script>
+{% endblock %}

@@ -1,0 +1,205 @@
+{% extends 'base-css.html' %}
+{% block title %}Διεπαφή Ψηφοφόρου{% endblock %}
+{% load staticfiles %}
+{% if running == 1 %}
+{% block extrascript %}	
+<!-- Countdown Clock -->
+	<script src="{% static "js/countdown.js" %}" type="text/javascript"></script>
+{% endblock %}
+{% endif %}
+{% block content %}
+
+      <div class="container">
+        <h2><font color="purple">{{election.question}}</font></h2>
+
+<!-- =========================================================== -->
+
+
+<!-- Modal invalid-->
+  <div class="modal fade" id="invalidModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h2 class="modal-title"><span class="glyphicon glyphicon-warning-sign"></span> ψήφος σας δεν έγινε δεκτή!</h2>
+        </div>
+        <div class="modal-body">
+		<h3>Προειδοποίηση: η ψήφος σας δεν έγινε δεκτή για έναν από τους παρακάτω λόγους:</h3>
+		<h3>  1. κωδικός που υποβάλατε δεν είναι έγκυρος.</h3>
+		<h3>  2. ψηφοδέλτιο έχει ήδη χρησιμοποιηθεί.</h3>
+		<h3>  3. έτερο ψηφοδέλτιο έχει ήδη χρησιμοποιηθεί.</h3>
+        <h3>  4. ψηφοφορία δεν έχει ξεκινήσει.</h3>
+        <h3>  5. ψηφοφορία έχει λήξει.</h3>
+        <h3>  6. ψηφοφορία έχει παύσει προσωρινά.</h3>
+        </div>
+        <div class="modal-footer">
+	<button type="button" class="btn btn-default btn-lg" data-dismiss="modal">Εντάξει</button> 
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+<!-- Modal feedback-->
+  <div class="modal fade" id="feedbackModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h2 class="modal-title"><span class="glyphicon glyphicon-warning-sign"></span> ψήφος σας έγινε δεκτή!</h2>
+        </div>
+        <div class="modal-body">
+		<h2>Συγχαρητήρια! Η ψήφος σας έγινε δεκτή. Σας ευχαριστούμε για τη συμμετοχή σας στην εκλογική διαδικασία.</h2>
+		<br/>
+		<div align="center">
+		<label><font size="7">Απόδειξη: &nbsp</font></label>	
+		<label id="receipt"><font size="7"> XXXXXX </font></label>
+		</div>
+		<br/>
+		<h3>ΥΓ: Σας ευχαριστούμε για τη συμμετοχή σας. Παρακαλούμε συμπληρώστε το ερωτηματολόγιό μας (χρόνος συμπλήρωσης το πολύ δύο λεπτά) πατώντας πάνω στο 'ΕΡΩΤΗΜΑΤΟΛΟΓΙΟ'.</h3>
+        </div>
+        <div class="modal-footer">
+          <a href="https://www.surveymonkey.com/s/7LVDF3F" type="button" class="btn btn-warning btn-lg" >ΕΡΩΤΗΜΑΤΟΛΟΓΙΟ</a>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
+
+
+{% for row in options %}
+{% for opt in row %}
+{% if opt.id > 0 %}
+<!-- Modal p{{opt.id}}-->
+<div class="modal fade" id="party{{opt.id}}" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+<h4 class="modal-title">{{opt.name.0}}</h4>
+</div>
+<div class="modal-body">
+<h2>{{opt.name.1}}</h2>
+
+<div align="center">
+<img src="{% static "images/" %}{% if election.total = 121  %}food{% else %}{{ opt.id }}{% endif%}.jpg" height="100" width="200"  class="img-thumbnail">
+</div>
+<br/>
+<br/>
+<div align="center">
+<form role="form" action="" method="post" id="formvote{{opt.id}}">
+<button type="submit"  class="btn btn-lg btn-success">υποβολή ψήφου</button>
+</form>
+</div>
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-lg btn-default" data-dismiss="modal">επιστροφή</button>
+</div>
+</div>
+</div>
+</div>
+{% endif %}
+{% endfor %}
+{% endfor %}
+
+
+<div class="container">
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                    Ψηφοδέλτιο #{{serial}}
+                </a>
+            </h4>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse in">
+            <div class="panel-body">
+<table class="table table-striped">
+<tbody>
+{% for row in options %}
+<tr>
+{% for opt in row %}
+<td>
+{% if opt.id > 0 %}
+<button type="button" style="width: 138px" class="btn btn-lg btn-info" data-toggle="modal" data-target="#party{{opt.id}}">{{opt.name.0}}</button>
+{% else %}
+</td>
+{% endif %}
+{% endfor %}
+</tr>
+{% endfor %}
+
+</tbody>
+</table>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+</div> <!-- /container -->
+
+{% endblock %}
+
+{% block afterbody %}
+<!-- Submit form -->
+<script type="text/javascript">
+	$(document).ready(function(){
+		var opts = new Array();
+		{% if AB = 0 %}
+		{% for pair in c1 %}
+                opts[{{forloop.counter}}]="{{pair.0}}"; 
+                {% endfor %}
+		{% else %}
+		{% for pair in c2 %}
+                opts[{{forloop.counter}}]="{{pair.0}}";
+                {% endfor %}
+		{% endif %}
+
+
+		var feedbacks = new Array();
+		{% if AB = 0 %}
+                {% for opt in c2 %}
+                feedbacks[{{forloop.counter}}]="{{opt.0}},{{opt.1}}";
+                {% endfor %}
+                {% else %}
+                {% for opt in c1 %}
+                feedbacks[{{forloop.counter}}]="{{opt.0}},{{opt.1}}";
+                {% endfor %}
+                {% endif %}
+
+		{% for any in c1  %}
+		$("#formvote{{forloop.counter}}").submit(function(){
+			$('#party{{forloop.counter}}').modal('hide');
+                        $.post("{{bb_url}}/vbb/{{election.EID}}/client/",
+                        {serial:{{serial}},
+                        code:opts[{{forloop.counter}}],
+                        {% for opt in c1 %}
+                        feedback{{forloop.counter}}:feedbacks[{{forloop.counter}}],
+                        {% endfor %}
+                        },
+                        function(data,status){
+                                if(data == "invalid code"){
+                                        $('#invalidModal').modal('show');
+                                }
+                                else {
+                                        $('#receipt').replaceWith('<label id="receipt"><font size="7" color="red"> '+data+'</font></label>');
+                                        $('#feedbackModal').modal('show');
+                                }
+                        })
+                        .fail(function(xhr) {
+                                console.log("Error: " + xhr.statusText);
+                                alert("Error: " + xhr.statusText);
+                        });
+
+                        return false;
+                });
+
+		{% endfor%}
+
+	});
+</script>
+{% endblock %}
+
+

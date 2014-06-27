@@ -1,0 +1,82 @@
+{% extends 'base-css.html' %}
+{% block title %}Key Holders{% endblock %}
+{% load staticfiles %}
+
+{% block content %}
+<!-- Modal invalid-->
+  <div class="modal fade" id="keyModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title"><span class="glyphicon glyphicon-floppy-open"></span> Welcome Key Holder</h4>
+        </div>
+        <div class="modal-body">
+		<div id="result"></div>
+		<p>Please input your private key:</p>
+		<form class="form-horizontal" role="form"action="" id='keyform' method="post" {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>{% csrf_token %}
+		<div class="form-group">
+              	<input type="text" id="key" name="key" style="width:80%" placeholder="Private Key" class="form-control">
+            	</div>
+		<div class="form-group" align="right">
+		<button type="submit" class="btn btn-primary" >Submit</button>
+		</div>
+		</form>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+{% endblock %}
+
+{% block endbody %}
+<!-- Crypto JS -->
+<script type="text/javascript" src="{% static "js/sjcl.js" %}"></script>
+<script type="text/javascript" src="{% static "js/core/bn.js" %}"></script>
+{% endblock %}
+
+
+{% block afterbody %}
+<script type="text/javascript">
+	var Tset = [{% for x in tallyset %}{%if not forloop.first %},{%endif%}"{{x}}"{% endfor %}];
+	var m = Tset.length, i, j,a,b,c;
+	var p = new sjcl.bn("1fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffa51868783bf2f966b7fcc0148f709a5d03bb5c9b8899c47aebb6fb71e91386409");
+	$(document).ready(function(){
+		$('#keyModal').modal('show');
+		$('#keyform').submit(function(){
+			var PRF = new sjcl.misc.hmac(sjcl.codec.base64.toBits($("#key").val()));
+			var hash = sjcl.hash.sha256.hash($("#key").val()+"{{salt}}")
+			var sumM = new sjcl.bn(0);
+			var sumR = new sjcl.bn(0);
+			for (i=0;i<m;i++){
+				a = sjcl.codec.hex.fromBits(PRF.mac(Tset[i].concat("m0")));
+				b = sjcl.codec.hex.fromBits(PRF.mac(Tset[i].concat("m1")));
+				c = new sjcl.bn(a+b);
+				sumM.addM(c);
+				a = sjcl.codec.hex.fromBits(PRF.mac(Tset[i].concat("r0")));
+                                b = sjcl.codec.hex.fromBits(PRF.mac(Tset[i].concat("r1")));
+                                c = new sjcl.bn(a+b);
+                                sumR.addM(c);
+			}
+			sumM = p.sub(sumM).mod(p);
+			sumR = p.sub(sumR).mod(p);
+			$.post("",
+			{keyM:sjcl.codec.base64.fromBits(sumM.toBits()),
+			keyR:sjcl.codec.base64.fromBits(sumR.toBits()),
+			hash:sjcl.codec.base64.fromBits(hash),
+			csrfmiddlewaretoken:'{{ csrf_token }}'
+			},
+			function(data,status){
+				$('#result').replaceWith('<div id="result">'+data+'</div>');
+			})
+			.fail(function(xhr) {
+				console.log("Error: " + xhr.statusText);
+				alert("Error: " + xhr.statusText);
+			});
+			return false;
+		});
+
+
+	});
+</script>
+{% endblock %}

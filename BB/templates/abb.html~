@@ -1,0 +1,135 @@
+{% extends 'base-css.html' %}
+{% block title %}Audit Bulletin Board{% endblock %}
+
+
+
+{% block content %}
+<div class="page-header">
+  <div class="container">
+       <div align="center"> 
+		   <h1>Audit Bulletin Board Public View</h1>
+		<a class="btn btn-large btn-primary" type="button"
+href="export/0/0/" target="_blank">Export</a>
+			<h1><font color="purple">{{election.question}}</font></h1>
+			<div class="btn-group">
+  			<button type="button" class="btn btn-default" disabled="disabled">Start time: {{election.start}}</button>
+  			<button type="button" class="btn btn-default" disabled="disabled">End time: {{election.end}}</button>
+			</div>
+       </div>
+  </div>
+</div>
+
+
+
+<ul id="Tables" class="nav nav-tabs">
+  {% for num in TableNum %}
+     {% if forloop.first %} <li class="active">  {% else %} <li>  {% endif %} <a href="#tab{{forloop.counter}}" data-toggle="tab">Table {{num}}</a></li>
+  {% endfor %}
+</ul>
+
+ <div id="TablesContent" class="tab-content">
+   {% for smalldata in BigData %}
+      <div class="tab-pane fade {% if forloop.first %} in active{%endif %}" id="tab{{forloop.counter}}">
+
+          <div class="panel panel-default">
+          <div class="panel-heading">
+          <h4 class="panel-title">
+          <a data-toggle="collapse" data-parent="#allversions{{forloop.counter}}" href="#T{{forloop.counter}}">
+           Update Log and Archives
+          </a>
+          </h4>
+          </div>
+          <div id="T{{forloop.counter}}" class="panel-collapse collapse">
+          <div class="panel-body">
+	    {% for ver in smalldata.Ver %}
+	    <p>Version {{ver.version}}: updated at {{ver.date}} <a
+          class="btn btn-large btn-default btn-sm" type="button"
+          href="export/{{forloop.parentloop.counter}}/{{ver.version}}/" target="_blank">CSV and signature</a></p>
+	    {% endfor %}
+          </div>
+          </div>
+          </div>
+	    
+	
+      <ul class="nav nav-pills">
+      {% for ver in smalldata.Ver %}
+         {% if forloop.last %} <li class="active">  {% else %} <li>  {% endif %} <a href="#T{{forloop.parentloop.counter}}V{{forloop.counter}}" data-toggle="tab">Ver. {{ver.version}}</a></li>
+      {% endfor %}
+      </ul>
+      
+      <div class="tab-content">
+      {% for itemset in smalldata.Data %}	
+      <div class="tab-pane fade {% if forloop.last %} in active{%endif %}" id="T{{forloop.parentloop.counter}}V{{forloop.counter}}">
+	    
+	      <table class="table table-hover manypopovers">
+              <thead>
+              <tr>
+                 {% for col in col_names %}
+              <th>{{col}}</th>
+              {% endfor %}
+              </tr>
+              </thead>
+              <tbody>
+              {% for item in itemset %}
+	      <tr>
+	      {% for entry in item %}
+	         <td><div style="word-wrap: break-word">
+	         {% if entry.opened %} 
+{% ifequal entry.plaintext "No" %}<button style="width: 50px" type="button" class="btn btn-info" data-toggle="popover"
+    title="Commitment, Decommitment:"
+   data-content="{{entry.commitment}},     {{entry.decommitment}}">{{entry.plaintext}}</button>   
+{% else %}
+<button type="button" {% ifnotequal entry.plaintext "Voted" %}class="btn btn-info"{% else %}style="width: 87px" class="btn btn-success"{% endifnotequal %}  data-toggle="popover"
+    title="Commitment, Decommitment:"
+   data-content="{{entry.commitment}},     {{entry.decommitment}}">{% ifequal entry.plaintext "Voted" %}<span class="glyphicon glyphicon-ok"></span>    {% endifequal %}{{entry.plaintext}}</button>
+{% endifequal %}
+		 {% else %} 
+			{% if entry.commitment %}
+				<button style="width: 120px" type="button" class="btn btn-danger" data-toggle="popover"
+     title="Commitment:" data-content="{{entry.commitment}}">Committed</button>
+			{% endif %}
+ 
+		 {% endif %}
+		 </div></td>   
+	      {% endfor %}
+         </tr>
+         {% endfor %}
+        </tbody>
+       </table>
+	    
+	    
+       </div>  <!-- tab-pane -->  
+
+
+	 {% endfor %}   <!-- smalldata -->  
+    </div>  <!-- small-tab-content -->
+
+
+    
+ </div> <!-- tab content -->   
+{% endfor %} <!-- bigdata -->
+ </div> <!-- Table tab -->
+
+ 
+{% endblock %}
+
+{% block afterbody %}
+	<!-- popover -->
+	<script>
+    	!function ($) {
+  		$(function(){
+    			$('.manypopovers').tooltip({
+      				selector: "[data-toggle=tooltip]",
+      				container: "body"
+    			})
+    			$("[data-toggle=popover]").popover({
+				trigger:"focus",
+				placement:"top"
+			})
+		})
+
+	}(window.jQuery)
+	</script>
+{% endblock %}
+
+

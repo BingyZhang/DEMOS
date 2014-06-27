@@ -1,0 +1,74 @@
+{% extends 'base-css.html' %}
+{% block title %}E-voting Authentication{% endblock %}
+{% load staticfiles %}
+
+{% block extrascript %}
+<!-- Countdown Clock -->
+<script src="{% static "js/countdown.js" %}" type="text/javascript"></script>
+<style type="text/css">
+    .highlight {
+        padding: 9px 9px;
+        margin-top: 14px;
+        margin-bottom: 14px;
+        background-color: #f7f7f9;
+        border: 1px solid #e1e1e8;
+        border-radius: 4px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div align="left" class="highlight">
+        <h2>Hello {{name}},</h2>
+	<p>{{a}}</p>
+	<p>{{b}}</p>
+	<p>{{c}}</p>
+        <h2>You are eligible for the following election(s):</h2>
+        {% for entry in elist %}
+        {% ifequal entry.auth -1 %}
+        <div class="alert alert-danger">
+        <p><font size="4">Election {{forloop.counter}} (blacklist): </font>      <a class="btn btn-large btn-danger" disabled="disabled" type="button"
+            href="{{BB_URL}}/vote/{{entry.e.EID}}/">{{entry.e.question}}</a></p>
+        <p> <font size="4">Creator: {{entry.e.creator}} (Email address: {{entry.e.c_email}})</font></p>
+        <p>Start time: {{entry.e.start}} &nbsp&nbsp&nbsp  End time: {{entry.e.end}}</p>
+        <p>VBB: <a href="https://crypto.di.uoa.gr/demos/vbb/{{entry.e.EID}}/" class="alert-link">https://crypto.di.uoa.gr/demos/vbb/{{entry.e.EID}}/</a></p>
+        <p>ABB: <a href="https://crypto.di.uoa.gr/demos/abb/{{entry.e.EID}}/" class="alert-link">https://crypto.di.uoa.gr/demos/abb/{{entry.e.EID}}/</a></p>
+        </div>
+        {% else %}
+	{% if entry.ended %}
+	<div class="alert alert-warning">
+	<p><font size="4">Election {{forloop.counter}}: </font>      <a class="btn btn-large btn-warning" disabled="disabled" type="button"
+            href="{{BB_URL}}/vote/{{entry.e.EID}}/">{{entry.e.question}}</a></p>
+	<p> <font size="4">Creator: {{entry.e.creator}} (Email address: {{entry.e.c_email}})</font></p>
+	<p>Start time: {{entry.e.start}} &nbsp&nbsp&nbsp  End time: {{entry.e.end}}</p>
+	<p>VBB: <a href="https://crypto.di.uoa.gr/demos/vbb/{{entry.e.EID}}/" class="alert-link">https://crypto.di.uoa.gr/demos/vbb/{{entry.e.EID}}/</a></p>
+	<p>ABB: <a href="https://crypto.di.uoa.gr/demos/abb/{{entry.e.EID}}/" class="alert-link">https://crypto.di.uoa.gr/demos/abb/{{entry.e.EID}}/</a></p>
+	</div>
+	{% else %}
+		{% if entry.started %}
+        <div class="alert alert-success">
+        <p><font size="4">Election {{forloop.counter}}: </font>      <a class="btn btn-large btn-success" type="button"
+            href="{{BB_URL}}/vote/{{entry.e.EID}}/">{{entry.e.question}}</a></p>
+        <p> <font size="4">Creator: {{entry.e.creator}} (Email address: {{entry.e.c_email}})</font></p>
+        <p>Start time: {{entry.e.start}} &nbsp&nbsp&nbsp  End time: {{entry.e.end}}</p>
+        <p>VBB: <a href="https://crypto.di.uoa.gr/demos/vbb/{{entry.e.EID}}/" class="alert-link">https://crypto.di.uoa.gr/demos/vbb/{{entry.e.EID}}/</a></p>
+        <p>ABB: <a href="https://crypto.di.uoa.gr/demos/abb/{{entry.e.EID}}/" class="alert-link">https://crypto.di.uoa.gr/demos/abb/{{entry.e.EID}}/</a></p>
+        </div>			
+		{% else %}
+        <div class="alert alert-info">
+        <p><font size="4">Election {{forloop.counter}}: </font>      <a class="btn btn-large btn-info" {% if entry.e.prepared %}{% else %}disabled="disabled"{% endif %} type="button"
+            href="{{BB_URL}}/vote/{{entry.e.EID}}/">{{entry.e.question}}</a></p>
+        <p> <font size="4">Creator: {{entry.e.creator}} (Email address: {{entry.e.c_email}})</font></p>
+        <p>Start time: {{entry.e.start}} &nbsp&nbsp&nbsp  End time: {{entry.e.end}}</p>
+        <p>VBB: <a href="https://crypto.di.uoa.gr/demos/vbb/{{entry.e.EID}}/" class="alert-link">https://crypto.di.uoa.gr/demos/vbb/{{entry.e.EID}}/</a></p>
+        <p>ABB: <a href="https://crypto.di.uoa.gr/demos/abb/{{entry.e.EID}}/" class="alert-link">https://crypto.di.uoa.gr/demos/abb/{{entry.e.EID}}/</a></p>
+        </div>
+		{% endif %}
+	{% endif %}
+        {% endifequal %}
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
