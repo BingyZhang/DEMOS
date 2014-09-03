@@ -26,13 +26,13 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = [
     'localhost',
-    'di.uoa.gr',
+    'elections01.uoa.gr',
     '*',
 ]
 
 #captacha pk and sk
-RECAPTCHA_PUBLIC_KEY = '6Lf-3fMSAAAAAANiRCwz2WCbjejdFcf4BmD8ghcY'
-RECAPTCHA_PRIVATE_KEY = '6Lf-3fMSAAAAAEQNlO4j0Bq6Ln9CDotPEGKq3qMm'
+RECAPTCHA_PUBLIC_KEY = '6LfKiPkSAAAAAObDNaoPzVH0R9TGuJ8xNxAzzSDU'
+RECAPTCHA_PRIVATE_KEY = '6LfKiPkSAAAAADoDH59uzg6ievDRzN1NBpPRt8xb'
 
 # Application definition
 
@@ -73,10 +73,21 @@ WSGI_APPLICATION = 'EA.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#    }
+#}
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'elections_uoa_ea',                      # Or path to database file if using sqlite3.
+        'USER': 'elections_uoa_ea',                      # Not used with sqlite3.
+        'PASSWORD': 'okairocgareggyc',                  # Not used with sqlite3.
+        'HOST': 'db1-devel.uoa.gr',                      # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
 
@@ -97,10 +108,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
-STATIC_URL = '/django_static/finer/static/'
+STATIC_URL = '/django_static/EA/static/'
+
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
+    '/var/www/django-static/EA/static/',
 )
 
-
-MEDIA_ROOT = '/var/www/finer/EA/'
+MEDIA_ROOT = '/var/www/EA/'
