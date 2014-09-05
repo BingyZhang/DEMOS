@@ -22,7 +22,7 @@ env['PYTHONIOENCODING'] = 'utf-8'
 
 # Create your views here.
 
-BB_URL = "http://elections02-devel.uoa.gr/bb/"
+BB_URL = "https://bb.elections-devel.uoa.gr/bb/"
 
 def base36encode(number, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
     """Converts an integer to a base36 string."""

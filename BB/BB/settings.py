@@ -26,7 +26,6 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = [
     'localhost',
-    'elections02.uoa.gr',
     '*',
 ]
 

@@ -20,10 +20,10 @@ from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Spacer, Table, TableStyle,Image, Paragraph
 
 
-BB_URL = "http://elections02-devel.uoa.gr/bb/"
-SAMPLE_URL = "http://elections01-devel.uoa.gr/ea/sample/"
-CLIENT_URL = "http://elections01-devel.uoa.gr/ea/client/"
-Ballot_URL = "http://elections01-devel.uoa.gr/ea/pdf/"
+BB_URL = "https://bb.elections-devel.uoa.gr/bb/"
+SAMPLE_URL = "https://elections-devel.uoa.gr/ea/sample/"
+CLIENT_URL = "https://elections-devel.uoa.gr/ea/client/"
+Ballot_URL = "https://elections-devel.uoa.gr/ea/pdf/"
 
  #support UTF-8
 env = os.environ

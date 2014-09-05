@@ -14,8 +14,8 @@ from django.core.files import File
 from tasks import add,prepare_ballot
 # Create your views here.
 
-BB_URL = "http://elections01-devel.uoa.gr/ea"
-ABB_URL = "http://elections02-devel.uoa.gr/bb"
+BB_URL = "https://elections-devel.uoa.gr/ea"
+ABB_URL = "https://bb.elections-devel.uoa.gr/bb"
 
  #support UTF-8
 env = os.environ
