@@ -26,7 +26,6 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = [
     'localhost',
-    'di.uoa.gr',
     '*',
 ]
 
@@ -65,11 +64,14 @@ WSGI_APPLICATION = 'BB.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'elections_uoa_bb',                      # Or path to database file if using sqlite3.
+        'USER': 'elections_uoa_bb',                      # Not used with sqlite3.
+        'PASSWORD': 'okairocgareggyc',                  # Not used with sqlite3.
+        'HOST': 'db1-devel.uoa.gr',                      # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
@@ -87,10 +89,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
-STATIC_URL = '/django_static/demos/static/'
+STATIC_URL = '/django_static/BB/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
 
 
-MEDIA_ROOT = '/var/www/demos/BB'
+MEDIA_ROOT = '/var/www/BB'

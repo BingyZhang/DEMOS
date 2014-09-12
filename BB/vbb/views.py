@@ -68,11 +68,11 @@ def tally(e):
         plain.append(aux.tallyplain)
 	plain.append(aux.tallydecom)
         temp_str_d = "\n".join(plain)
-	p = subprocess.Popen(["sh","/var/www/finer/EC-ElGamal/Tally.sh",temp_str_c, temp_str_d],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+	p = subprocess.Popen(["sh","/var/www/EC-ElGamal/Tally.sh",temp_str_c, temp_str_d],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         output,err = p.communicate()
 	if int(output) == 1:
         	aux.verify = True
-        f = open('/var/www/finer/EC-ElGamal/EC_decommit.txt')
+        f = open('/var/www/EC-ElGamal/EC_decommit.txt')
         lines = f.readlines()
         f.close()
         aux.tallyplain = lines[0]
@@ -177,16 +177,16 @@ def send_request(e):
 	#output for tally
 	temp_str_c = "\n".join(opt_ciphers)
 	temp_str_d = "\n".join(opt_plains)
-	p = subprocess.Popen(["sh","/var/www/finer/EC-ElGamal/Tally.sh",temp_str_c, temp_str_d],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+	p = subprocess.Popen(["sh","/var/www/EC-ElGamal/Tally.sh",temp_str_c, temp_str_d],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 	output,err = p.communicate()
 	#read the files and create Aux
 	aux = Auxiliary(election = e)
-	f = open('/var/www/finer/EC-ElGamal/EC_sum.txt')
+	f = open('/var/www/EC-ElGamal/EC_sum.txt')
         lines = f.readlines()
         f.close()
 	aux.tallycipher = ",".join(lines)	
 
-        f = open('/var/www/finer/EC-ElGamal/EC_decommit.txt')
+        f = open('/var/www/EC-ElGamal/EC_decommit.txt')
         lines = f.readlines()
         f.close()
         aux.tallyplain = lines[0].strip()
@@ -386,7 +386,10 @@ def client(request, eid = 0):
     except Election.DoesNotExist:
 	return HttpResponse('The election ID is invalid!')
     if request.method == 'POST':
-	if request.is_ajax():#ajax post
+        #response = HttpResponse("invalid code")
+        #response['Access-Control-Allow-Origin'] = "*"
+        #return response	
+	#if request.is_ajax():#ajax post
 	    #check election is running?
 	    running = 0
 	    if e.was_started():
@@ -401,7 +404,9 @@ def client(request, eid = 0):
 	    #if e.pause:
 		#running = 10
 	    if running != 1:
-		return HttpResponse("invalid code")
+		response = HttpResponse("invalid code")
+		response['Access-Control-Allow-Origin'] = "*"
+		return response
 	    feedback = []
             # maximum 50 options
             for i in range(1,51):
@@ -423,11 +428,15 @@ def client(request, eid = 0):
                     if feed[0] in codelist:
                         balls = Dballot(vbb = new_entry, serial = serial, code = feed[0], checked = True, value = feed[1])
                         balls.save()
-                return HttpResponse(receipt)
+		response = HttpResponse(receipt)
+                response['Access-Control-Allow-Origin'] = "*"
+                return response
             else:
-                return HttpResponse('invalid code')
+                response = HttpResponse("invalid code")
+                response['Access-Control-Allow-Origin'] = "*"
+                return response
 	#404 if not ajax for security
-	return render_to_response('404.html')        
+	#return render_to_response('404.html')        
     else:
         return render_to_response('404.html')
 
@@ -526,15 +535,20 @@ def keyholder(request, eid = 0,salt = ""):
 		e.save()
 		#if all key holders, do tally
 		if e.keys == e.keysTotal:
-			tally(e)		
-		return HttpResponse("Success!")
+			tally(e)
+		response = HttpResponse("Success!")
+                response['Access-Control-Allow-Origin'] = "*"
+                return response		
 	else:
 		if e.was_ended():
                         if not e.request:
                                 send_request(e)
                                 e.request = True
                                 e.save()             
-			return render_to_response('keyholder.html',{'tallyset':e.tallySet.split(","),'salt':salt},context_instance=RequestContext(request))
+			tallyset = e.tallySet
+			if tallyset is None:
+				tallyset = " , "
+			return render_to_response('keyholder.html',{'tallyset':tallyset.split(","),'salt':salt},context_instance=RequestContext(request))
 		else:
 			return HttpResponse('The election is not ended yet! Please come back later')
 
