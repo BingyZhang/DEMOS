@@ -22,7 +22,7 @@ env['PYTHONIOENCODING'] = 'utf-8'
 
 # Create your views here.
 
-BB_URL = "https://crypto.di.uoa.gr/demos/"
+BB_URL = "https://bb.elections-devel.uoa.gr/bb/"
 
 def base36encode(number, alphabet='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'):
     """Converts an integer to a base36 string."""
@@ -88,6 +88,8 @@ def index(request):#CAS def no captcha
             end = timezone.now().strftime("%m/%d/%Y %H:%M")
 	start_time = time.strptime(start, "%m/%d/%Y %H:%M")
 	end_time = time.strptime(end, "%m/%d/%Y %H:%M")
+	#total = total + pdf (hack for new front page)
+	total = str(int(total)+intpdf)
         #EID should be hash of question start and end time  short eid
         #eid = hashlib.sha1(q + start + end).hexdigest()
 	counter = Election.objects.count()

@@ -99,7 +99,7 @@
 
 <div class="container">
 <h2>Hello{% if name %} {{name}}{% endif %},</h2>
-<p>Please select one of the following two ballots and cast your vote. {% if email%} An email that contains your votecode-based ballots has been sent to "{{email}}". {% endif %}Alternatively, you can cast your vote at <a href="https://crypto.di.uoa.gr/demos/vbb/{{election.EID}}/">VBB</a> by entrying the serial number and votecode(s).</p>
+<p>Please select one of the following two ballots and cast your vote. {% if email%} An email that contains your votecode-based ballots has been sent to "{{email}}". {% endif %}Alternatively, you can cast your vote at <a href="https://bb.elections-devel.uoa.gr/bb/vbb/{{election.EID}}/">VBB</a> by entrying the serial number and votecode(s).</p>
 
 <div class="panel-group" id="accordion">
     <div class="panel panel-default">
@@ -112,7 +112,7 @@
         </div>
         <div id="collapseOne" class="panel-collapse collapse in">
             <div class="panel-body">
-                <form role="form" action="" method="post" id="formvote1">
+                <form role="form" action="{{bb_url}}/vbb/{{election.EID}}/client/" method="post" id="formvote1">
 			<div class="btn-group" data-toggle="buttons">
 			{% for opt in c1 %}
 			<label class="btn btn-lg btn-info">
@@ -148,24 +148,24 @@
 
 		$("#formvote1").submit(function(){
 			var time = new Date().getTime() - start;
-			var code = '';
+			var Scode = '';
 			var feedbacks = new Array();
 			var which = $('input[name=options]:checked').val();
 			if (time%2 == 0){
 				{% for opt in c2 %}
                         	feedbacks[{{forloop.counter}}]="{{opt.0}},{{opt.1}}";         
                         	{% endfor %}
-				code = opts1[which];
+				Scode = opts1[which];
 			}
 			else {
                                 {% for opt in c1 %}
                                 feedbacks[{{forloop.counter}}]="{{opt.0}},{{opt.1}}"; 
                                 {% endfor %}
-				code = opts2[which];
+				Scode = opts2[which];
 			};
 			$.post("{{bb_url}}/vbb/{{election.EID}}/client/",
 			{serial:{{serial}},
-			code:code,
+			code:Scode,
 			{% for opt in c1 %}
                 	feedback{{forloop.counter}}:feedbacks[{{forloop.counter}}],
                 	{% endfor %}

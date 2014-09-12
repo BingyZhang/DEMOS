@@ -20,10 +20,10 @@ from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Spacer, Table, TableStyle,Image, Paragraph
 
 
-BB_URL = "https://crypto.di.uoa.gr/demos/"
-SAMPLE_URL = "https://crypto.di.uoa.gr/ea/sample/"
-CLIENT_URL = "https://crypto.di.uoa.gr/ea/client/"
-Ballot_URL = "https://crypto.di.uoa.gr/ea/pdf/"
+BB_URL = "https://bb.elections-devel.uoa.gr/bb/"
+SAMPLE_URL = "https://elections-devel.uoa.gr/ea/sample/"
+CLIENT_URL = "https://elections-devel.uoa.gr/ea/client/"
+Ballot_URL = "https://elections-devel.uoa.gr/ea/pdf/"
 
  #support UTF-8
 env = os.environ
@@ -110,11 +110,11 @@ def prepare_ballot(e, total, n, emails, keyemails, intpdf):
         for ab in range(2):
 	    #print "script run"
 
-	    p = subprocess.Popen(["sh","/var/www/finer/EC-ElGamal/GenPerm.sh", str(n), str(total)],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+	    p = subprocess.Popen(["sh","/var/www/EC-ElGamal/GenPerm.sh", str(n), str(total)],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 	    output,err = p.communicate()
 	    votes[ab] = output
 	    #read from the disk file for ciphers
-	    f = open('/var/www/finer/EC-ElGamal/EC_cipher.txt')
+	    f = open('/var/www/EC-ElGamal/EC_cipher.txt')
 	    lines = f.readlines()
 	    f.close()
 	    i = 0
@@ -127,7 +127,7 @@ def prepare_ballot(e, total, n, emails, keyemails, intpdf):
 			ciphers[ab]+=","	
 		ciphers[ab]+=enc.strip()
 	    #read from the disk file for plains
-            f = open('/var/www/finer/EC-ElGamal/EC_plain.txt')
+            f = open('/var/www/EC-ElGamal/EC_plain.txt')
             lines = f.readlines()
             f.close()
             i = 0

@@ -14,8 +14,8 @@ from django.core.files import File
 from tasks import add,prepare_ballot
 # Create your views here.
 
-BB_URL = "https://crypto.di.uoa.gr/ea"
-ABB_URL = "https://crypto.di.uoa.gr/demos"
+BB_URL = "https://elections-devel.uoa.gr/ea"
+ABB_URL = "https://bb.elections-devel.uoa.gr/bb"
 
  #support UTF-8
 env = os.environ
@@ -204,6 +204,7 @@ def client(request, eid = 0,token = 0):
     options = e.choice_set.values('text')
     opts = [x['text'] for x in options]
     running = 0
+    time = 0
     if e.was_started():
 	running = 1
 	time = int((e.end - timezone.now()).total_seconds())
